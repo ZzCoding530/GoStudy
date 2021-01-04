@@ -1,0 +1,248 @@
+# 一些前言
+
+## Go语言的特点
+
+1. 有静态编译语言的性能也有动态语言开发维护的高效率
+2. 保留了C的弱化指针
+3. 包的概念，Go语言的一个文件都要归属于一个包，不能单独存在
+4. 垃圾回收机制，内存自动回收
+5. 天然并发
+6. 函数返回多个值
+
+## Mac下编译执行Go文件
+
+文件后缀是.go
+
+`go build -o 文件输出名字 源码文件.go`
+
+比如
+
+ `go build -o first hello.go`
+
+运行就
+
+`./first`
+
+
+
+## 规范代码命令
+
+`gofmt -w hello.go`
+
+然后代码就变整齐了
+
+## Go语言官方教程
+
+[https://tour.go-zh.org/basics/3](https://tour.go-zh.org/basics/3)
+
+
+
+# Go语言语法
+
+这里仅记录那些和Java，C++区别的地方
+
+## 每句话之后都不需要加分号
+
+
+
+## 函数
+
+### 参数类型要在变量名之后！
+
+```go
+package main
+import "fmt"
+
+func add(x int, y int) int {
+	return x + y
+}
+
+func main() {
+	fmt.Println(add(42, 13))
+}
+
+```
+
+### 可以省略类型时候
+
+`x int ,y int ` 可以写成 `x,y int`
+
+## 命名变量
+
+`var i int` 命名一个名字为i类型为int的变量
+
+## 短变量声明
+
+只能用在函数内，函数外必须写var,func等关键字
+
+## 常量
+
+用const声明，不能用 := 
+
+## Go唯一的循环结构for循环
+
+```go
+func main() {
+	sum := 0
+  //注意for后面没有括号
+	for i := 0; i < 10; i++ {
+		sum += i
+	}
+	fmt.Println(sum)
+}
+func main() {
+	sum := 1
+  //可以就写中间的
+	for ; sum < 1000; {
+		sum += sum
+	}
+	fmt.Println(sum)
+}
+```
+
+## while循环：for去掉分号就是了
+
+```go
+func main() {
+	sum := 1
+	for sum < 1000 {
+		sum += sum
+	}
+	fmt.Println(sum)
+}
+```
+
+## 无限循环
+
+for后面啥也不写就是了
+
+```go
+func main() {
+	for {
+	}
+}
+```
+
+## if判断
+
+跟for类似，也是后面不写括号
+
+```go
+func sqrt(x float64) string {
+	if x < 0 {
+		return sqrt(-x) + "i"
+	}
+	return fmt.Sprint(math.Sqrt(x))
+}
+```
+
+## if判断后面加语句
+
+```go
+func main() {
+
+   var a int = 10
+   b := 100
+	//可以加个变量he，用来做判断，作用域仅在if语句之内
+   if he := a + b; he > 100 {
+      fmt.Println(he)
+   }
+}
+```
+
+## else跟别的语言一样
+
+```go
+func pow(x, n, lim float64) float64 {
+	if v := math.Pow(x, n); v < lim {
+		return v
+	} else {
+		fmt.Printf("%g >= %g\n", v, lim)
+	}
+	// 这里开始就不能使用 v 了
+	return lim
+}
+```
+
+## switch语句
+
+跟其他语言差不多，但Go中不需要判断条件是常量，而且取值不必为整数
+
+ Go 只运行选定的 case，而非之后所有的 case。 实际上，Go 自动提供了在这些语言中每个 case 后面所需的 break 语句。 除非以 fallthrough 语句结束，否则分支会自动终止
+
+```go
+func main() {
+	fmt.Print("Go runs on ")
+	switch os := runtime.GOOS; os {
+	case "darwin":
+		fmt.Println("OS X.")
+	case "linux":
+		fmt.Println("Linux.")
+	default:
+		// freebsd, openbsd,
+		// plan9, windows...
+		fmt.Printf("%s.\n", os)
+	}
+}
+```
+
+## switch替代长if...else
+
+不写判断条件就行了，比长串if...else要简洁
+
+```go
+func main() {
+	t := time.Now()
+	switch {
+	case t.Hour() < 12:
+		fmt.Println("Good morning!")
+	case t.Hour() < 17:
+		fmt.Println("Good afternoon.")
+	default:
+		fmt.Println("Good evening.")
+	}
+}
+```
+
+## defer
+
+defer 语句会将函数推迟到外层函数返回之后执行
+
+推迟调用的函数其参数会立即求值，但直到外层函数返回前该函数都不会被调用。
+
+```go
+func main() {
+
+	defer fmt.Println("这句defer了，应该后执行，虽然写在前面了")
+
+	fmt.Println("这句应该先执行吧。")
+}
+```
+
+结果是下面一行先打印
+
+## defer栈
+
+[Go官网有关defer的博客](https://blog.go-zh.org/defer-panic-and-recover)
+
+推迟的函数调用会被压入一个栈中。当外层函数返回时，被推迟的函数会按照后进先出的顺序调用
+
+```go
+func main() {
+
+	for i := 0; i < 3; i++ {
+		fmt.Println("这是没加defer的")
+		fmt.Println(i)
+
+		defer fmt.Println(i)
+		defer fmt.Println("加完defer以后是")
+
+	}
+
+	fmt.Println("开始执行吧")
+	fmt.Println("====================")
+}
+```
+
+<img src="/Users/zhangchen/Library/Application Support/typora-user-images/截屏2021-01-04 下午8.18.36.png" alt="截屏2021-01-04 下午8.18.36" style="zoom:50%;" />
+
