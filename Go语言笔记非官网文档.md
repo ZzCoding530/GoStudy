@@ -296,8 +296,6 @@ for k,v :=range myMap{
 
 #### Map切片
 
-
-
 ```go
 sliceMap := []map[string]string
 ```
@@ -316,7 +314,127 @@ sliceMap := []map[string]string
 
 
 
+## 稍微进阶
+
+### Go语言的面向对象
+
+没有class 只有struct
+
+用struct存东西
+
+#### Struct声明格式
+
+```go
+type structname struct{
+	field1 type
+	field2 type
+}
+```
+
+如果字段类型是切片或者map，那得先make再用
+
+#### 创建结构体实例的方式
+
+1. ```go
+   var struct1 structname
+   ```
+
+   然后再赋值字段
+
+2. 直接在创建时候赋值字段
+
+   ```go
+   var strct1 structname{"xxx",xxx}
+   ```
+
+3. 用new关键字
+
+   ```go
+   var pstruct *structname = new(structname)
+   ```
+
+   注意，返回的是一个指向结构体的指针，要赋值得这么写
+
+   ```go
+   （*pstruct）.field = xxx
+     pstruct.field = xxx
+   ```
+
+   第二行是简写，也可以，底层会对指针做取值处理
+
+4. 用&
+
+   ```go
+   var pstruct *structname = &structname{"xxx", xxx}
+   ```
+
+   返回的也是指针，跟3一样赋值
+
+#### 结构体注意事项
+
+1. 内存中 字段是连续的，如果字段是指针类型，指针所在的地址是连续的，但指针指向的地址不一定
+2. 结构体在和其他类型相互转换的时候，需要有完全相同的字段名，也就是说除了结构体的名字，其他都一样
+3. 结构体进行type重新定义（相当于取别名），会被认为是新的数据类型，但是相互之间可以强转
+4. struct的tag
 
 
 
+### 方法
+
+方法是坐拥在指定的数据类型上的，即和指定的数据类型绑定
+
+#### 声明
+
+```go
+Type A struct{
+	Num int
+}
+func (a A)test(){
+  fmt.Println(a.Num)
+}
+```
+
+表示结构体A有一个名叫test的方法
+
+
+
+### Go的封装
+
+把结构体的字段都小写，这样别的包就无法直接访问，然后手动写Set，Get方法，还有手动写一个大写的类似构造函数的东西
+
+### Go的继承
+
+在B中写一个匿名的A结构体，这样B就能用A的字段了
+
+```go
+type Goods struct{
+  name sring
+  price int
+}
+type Books struct{
+  Goods //这句就是匿名结构体
+  author string
+}
+```
+
+**也可以多重继承**
+
+### Go接口
+
+```go
+type usb interface{
+	Start()
+	Stop()
+}
+```
+
+接口不是显示地被实现，而是他的方法都被实现了，那就说这个接口被实现了
+
+#### 接口注意事项
+
+- 接口本身不能创建实例
+- 接口中所有方法都是没有被实现的
+- 一个自定义数据类型可以实现多个接口
+- 接口中不能有变量
+- 接口可以继承多个别的接口，比如接口A继承B，C，那实现接口A也得实现B，C
 
