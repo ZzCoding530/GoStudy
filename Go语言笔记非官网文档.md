@@ -438,3 +438,28 @@ type usb interface{
 - 接口中不能有变量
 - 接口可以继承多个别的接口，比如接口A继承B，C，那实现接口A也得实现B，C
 
+### 类型断言
+
+类似强转
+
+有时候不能强转，所以加个判断
+
+```go
+y, ok :=x.(float64)
+if ok {
+  //成功 ok是true
+}else{
+  //失败 ok是false
+}
+```
+
+也可以写在一行
+
+```go
+if y, ok :=x.(float64); ok {
+  //成功 ok是true
+}else{
+  //失败 ok是false
+}
+```
+
